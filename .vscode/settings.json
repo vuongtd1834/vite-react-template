@@ -52,5 +52,6 @@
     "postcss",
     "github-actions-workflow"
   ],
-  "i18n-ally.keystyle": "nested"
+  "i18n-ally.keystyle": "nested",
+  "testing.automaticallyOpenTestResults": "neverOpen"
 }

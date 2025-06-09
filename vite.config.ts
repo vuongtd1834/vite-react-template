@@ -5,23 +5,31 @@ import react from '@vitejs/plugin-react-swc';
 import { defineConfig, normalizePath } from 'vite';
 import checker from 'vite-plugin-checker';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import tailwindcss from '@tailwindcss/vite';
+import { fileURLToPath, URL } from 'node:url'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), TanStackRouterVite({
-    routeToken: 'layout',
-  }), viteStaticCopy({
-    targets: [
-      {
-        src: normalizePath(path.resolve('./src/assets/locales')),
-        dest: normalizePath(path.resolve('./dist')),
-      },
-    ],
-  }), checker({ typescript: true })],
+  plugins: [
+    react(), 
+    tailwindcss(),
+    TanStackRouterVite({
+      routeToken: 'layout',
+    }), 
+    viteStaticCopy({
+      targets: [
+        {
+          src: normalizePath(path.resolve('./src/assets/locales')),
+          dest: normalizePath(path.resolve('./dist')),
+        },
+      ],
+    }), 
+    checker({ typescript: true })
+  ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@/public': path.resolve(__dirname, './public'),
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@/public': fileURLToPath(new URL('./public', import.meta.url))
     },
   },
   server: {
