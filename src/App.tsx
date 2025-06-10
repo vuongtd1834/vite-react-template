@@ -6,10 +6,10 @@ type AppProps = { router: Register['router'] };
 
 function App({ router }: AppProps) {
   return (
-      <QueryProvider>
-        <RouterProvider router={router} />
-        {/* TODO: add toast, global dialog, global loading, ..etc */}
-      </QueryProvider>
+    <QueryProvider>
+      <RouterProvider router={router} />
+      {/* TODO: add toast, global dialog, global loading, ..etc */}
+    </QueryProvider>
   );
 }
 
