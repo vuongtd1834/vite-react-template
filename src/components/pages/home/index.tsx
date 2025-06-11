@@ -137,152 +137,7 @@ const WebRTCMultiStreamViewer = () => {
 
         if (videoElement && consumer.track && streamData) {
           console.log(`✅ Attaching track for ${streamKey}`);
-
-          // Debug the consumer track before creating stream
-          console.log(`🔍 Consumer track detailed info:`, {
-            id: consumer.track.id,
-            kind: consumer.track.kind,
-            label: consumer.track.label,
-            enabled: consumer.track.enabled,
-            muted: consumer.track.muted,
-            readyState: consumer.track.readyState,
-            contentHint: consumer.track.contentHint,
-            constraints: consumer.track.getConstraints ? consumer.track.getConstraints() : 'N/A',
-            capabilities: consumer.track.getCapabilities ? consumer.track.getCapabilities() : 'N/A',
-            settings: consumer.track.getSettings ? consumer.track.getSettings() : 'N/A',
-          });
-
           const stream = new MediaStream([consumer.track]);
-
-          // Debug the created stream
-          console.log(`🔍 Created MediaStream info:`, {
-            id: stream.id,
-            active: stream.active,
-            tracks: stream.getTracks().length,
-            videoTracks: stream.getVideoTracks().length,
-            audioTracks: stream.getAudioTracks().length,
-          });
-
-          // Test if track has actual video frames by checking settings
-          const trackSettings = consumer.track.getSettings ? consumer.track.getSettings() : {};
-          console.log(`🔍 Track settings detail:`, trackSettings);
-
-          if (trackSettings.width && trackSettings.height) {
-            console.log(
-              `✅ Track has video dimensions: ${trackSettings.width}x${trackSettings.height}`
-            );
-          } else {
-            console.warn(`⚠️ Track missing video dimensions - might be empty track`);
-          }
-
-          // Create a test canvas to verify track is producing frames
-          const testCanvas = document.createElement('canvas');
-          testCanvas.width = 200;
-          testCanvas.height = 150;
-          const testCtx = testCanvas.getContext('2d');
-
-          if (testCtx) {
-            // Try to draw track onto canvas to test if it has actual video
-            const testVideo = document.createElement('video');
-            testVideo.srcObject = stream;
-            testVideo.muted = true;
-            testVideo
-              .play()
-              .then(() => {
-                console.log(`🎯 Test video playing - checking for frames...`);
-
-                // Check for actual video frames
-                const checkFrames = () => {
-                  if (testVideo.videoWidth > 0 && testVideo.videoHeight > 0) {
-                    console.log(
-                      `✅ Test video has dimensions: ${testVideo.videoWidth}x${testVideo.videoHeight}`
-                    );
-
-                    // Draw frame to canvas to test actual content
-                    testCtx.drawImage(testVideo, 0, 0, testCanvas.width, testCanvas.height);
-                    const imageData = testCtx.getImageData(
-                      0,
-                      0,
-                      testCanvas.width,
-                      testCanvas.height
-                    );
-
-                    // Check if pixels are not all black/transparent
-                    let hasContent = false;
-                    if (imageData.data) {
-                      for (let i = 0; i < imageData.data.length; i += 4) {
-                        if (
-                          imageData.data[i] > 0 ||
-                          imageData.data[i + 1] > 0 ||
-                          imageData.data[i + 2] > 0
-                        ) {
-                          hasContent = true;
-                          break;
-                        }
-                      }
-                    }
-
-                    console.log(`🎯 Track has actual video content: ${hasContent}`);
-                    if (hasContent) {
-                      console.log(`✅ Track is producing real video frames!`);
-                    } else {
-                      console.warn(`⚠️ Track dimensions exist but content appears blank/black`);
-                    }
-                  } else {
-                    console.warn(`⚠️ Test video still has no dimensions after play`);
-                  }
-                };
-
-                // Check frames after a short delay
-                setTimeout(checkFrames, 500);
-                setTimeout(checkFrames, 1000);
-                setTimeout(checkFrames, 2000);
-              })
-              .catch((err) => {
-                console.error(`❌ Test video play failed:`, err);
-              });
-          }
-
-          // IMPORTANT: Debug why track has no dimensions
-          if (!trackSettings.width && !trackSettings.height) {
-            console.error(`🚨 TRACK HAS NO VIDEO DIMENSIONS!`);
-            console.log(`🔍 Debugging consumer creation...`);
-            console.log(`🔍 Consumer details:`, {
-              id: consumer.id,
-              kind: consumer.kind,
-              rtpParameters: consumer.rtpParameters,
-              paused: consumer.paused,
-              producerPaused: consumer.producerPaused,
-              track: !!consumer.track,
-            });
-
-            // Check if this is a mock consumer issue
-            if (typeof consumer.resume === 'function') {
-              console.log(`🔄 Trying to resume consumer...`);
-              consumer.resume();
-            }
-
-            // Check if we need to explicitly request video
-            if (socketRef.current) {
-              console.log(`📡 Requesting producer resume from server...`);
-              socketRef.current.emit('resumeProducer', {
-                deviceId: streamData.deviceId,
-                cameraId: streamData.cameraId,
-              });
-
-              // Also try consumer resume
-              socketRef.current.emit('resumeConsumer', {
-                deviceId: streamData.deviceId,
-                cameraId: streamData.cameraId,
-                consumerId: consumer.id,
-              });
-            }
-
-            console.warn(`⚠️ Track Settings:`, trackSettings);
-            console.warn(`⚠️ This might be an empty track or consumer not properly created`);
-            console.warn(`⚠️ Server might not be sending actual video data`);
-          }
-
           videoElement.srcObject = stream;
 
           console.log(`📺 Track attached, new srcObject:`, videoElement.srcObject);
@@ -315,12 +170,130 @@ const WebRTCMultiStreamViewer = () => {
             });
           });
 
-          // Backup retry attempts only if video is still paused after initial attempts
-          const retryAttempts = [1000, 2000, 3000];
+          console.log(`📺 Video element properties:`, {
+            srcObject: videoElement.srcObject,
+            autoplay: videoElement.autoplay,
+            muted: videoElement.muted,
+            playsInline: videoElement.playsInline,
+            paused: videoElement.paused,
+            readyState: videoElement.readyState,
+            currentTime: videoElement.currentTime,
+            duration: videoElement.duration,
+            videoWidth: videoElement.videoWidth,
+            videoHeight: videoElement.videoHeight,
+          });
+
+          // Add ALL video events for debugging
+          const videoEvents = [
+            'loadstart',
+            'loadeddata',
+            'loadedmetadata',
+            'canplay',
+            'canplaythrough',
+            'playing',
+            'pause',
+            'ended',
+            'error',
+            'stalled',
+            'waiting',
+            'seeking',
+            'seeked',
+            'timeupdate',
+            'volumechange',
+            'ratechange',
+            'durationchange',
+            'progress',
+            'suspend',
+            'abort',
+            'emptied',
+          ];
+
+          videoEvents.forEach((eventName) => {
+            videoElement.addEventListener(
+              eventName,
+              (_e) => {
+                console.log(`🎬 ${streamKey}: VIDEO EVENT '${eventName}'`, {
+                  readyState: videoElement.readyState,
+                  paused: videoElement.paused,
+                  currentTime: videoElement.currentTime,
+                  duration: videoElement.duration,
+                  videoWidth: videoElement.videoWidth,
+                  videoHeight: videoElement.videoHeight,
+                });
+              },
+              { once: eventName === 'loadedmetadata' || eventName === 'canplay' }
+            );
+          });
+
+          // Try immediate play - don't wait for events
+          console.log(`🚀 Attempting immediate play for ${streamKey}`);
+          videoElement
+            .play()
+            .then(() => {
+              console.log(`▶️ Immediate play successful for ${streamKey}`);
+            })
+            .catch((error) => {
+              console.error(`❌ Immediate play failed for ${streamKey}:`, error);
+            });
+
+          // Wait for metadata to load before playing
+          const handleLoadedMetadata = () => {
+            console.log(`🎬 ${streamKey}: Metadata loaded, attempting to play`);
+            console.log(`📺 Updated video properties:`, {
+              readyState: videoElement.readyState,
+              videoWidth: videoElement.videoWidth,
+              videoHeight: videoElement.videoHeight,
+              duration: videoElement.duration,
+            });
+
+            videoElement
+              .play()
+              .then(() => {
+                console.log(`▶️ Video playing successfully for ${streamKey}`);
+              })
+              .catch((error) => {
+                console.error(`❌ Failed to play video for ${streamKey}:`, error);
+
+                // Try alternative approaches
+                setTimeout(() => {
+                  console.log(`🔄 Retrying play for ${streamKey}...`);
+                  videoElement.play().catch((err) => {
+                    console.error(`❌ Retry failed for ${streamKey}:`, err);
+                  });
+                }, 1000);
+              });
+          };
+
+          // Wait for canplay event
+          const handleCanPlay = () => {
+            console.log(`🎬 ${streamKey}: Can play - ready to start playback`);
+            if (videoElement.paused) {
+              videoElement.play().catch(console.error);
+            }
+          };
+
+          // Add event listeners
+          videoElement.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
+          videoElement.addEventListener('canplay', handleCanPlay, { once: true });
+
+          // Force load if readyState is 0
+          if (videoElement.readyState === 0) {
+            console.log(`🔄 ReadyState is 0, forcing load for ${streamKey}`);
+            videoElement.load();
+
+            // Try play after load
+            setTimeout(() => {
+              console.log(`🚀 Post-load play attempt for ${streamKey}`);
+              videoElement.play().catch(console.error);
+            }, 100);
+          }
+
+          // Multiple retry attempts
+          const retryAttempts = [500, 1000, 2000, 3000];
           retryAttempts.forEach((delay, index) => {
             setTimeout(() => {
               if (videoElement.paused) {
-                console.log(`🔄 Backup retry attempt ${index + 1} for ${streamKey} (${delay}ms)`);
+                console.log(`🔄 Retry attempt ${index + 1} for ${streamKey} (${delay}ms)`);
                 console.log(`📊 Current state:`, {
                   readyState: videoElement.readyState,
                   paused: videoElement.paused,
@@ -329,7 +302,7 @@ const WebRTCMultiStreamViewer = () => {
                   videoHeight: videoElement.videoHeight,
                 });
                 videoElement.play().catch((err) => {
-                  console.error(`❌ Backup retry ${index + 1} failed:`, err);
+                  console.error(`❌ Retry ${index + 1} failed:`, err);
                 });
               }
             }, delay);
@@ -399,7 +372,7 @@ const WebRTCMultiStreamViewer = () => {
           return;
         }
 
-        console.log(`��️ Creating consumer for ${deviceId}/${cameraId}...`);
+        console.log(`🍽️ Creating consumer for ${deviceId}/${cameraId}...`);
 
         socketInstance.emit('consume', {
           deviceId,
@@ -718,6 +691,79 @@ const WebRTCMultiStreamViewer = () => {
 
     newSocket.on('error', (error: unknown) => {
       console.error('❌ Socket error:', error);
+    });
+
+    // Enhanced video frame handling for smooth playback
+    const canvasRefs = new Map();
+    const streamRefs = new Map();
+
+    newSocket.on('videoFrameData', (data) => {
+      console.log(`📺 Received video frame from ${data.deviceId}/${data.cameraId}:`, {
+        format: data.format,
+        timestamp: data.timestamp,
+        dataSize: data.frameData.length,
+      });
+
+      const streamKey = `${data.deviceId}-${data.cameraId}`;
+      const videoElement = videoRefs.current.get(streamKey);
+
+      if (videoElement && data.frameData) {
+        try {
+          // Get or create canvas for this stream
+          let canvas = canvasRefs.get(streamKey);
+          if (!canvas) {
+            canvas = document.createElement('canvas');
+            canvas.width = 1920; // Default C922 resolution
+            canvas.height = 1080;
+            canvasRefs.set(streamKey, canvas);
+
+            // Create and set up stream
+            const stream = canvas.captureStream(30); // 30fps output
+            videoElement.srcObject = stream;
+            streamRefs.set(streamKey, stream);
+
+            console.log(`🎬 Created canvas stream for ${streamKey}`);
+          }
+
+          const ctx = canvas.getContext('2d');
+
+          // Convert base64 to image and draw to canvas
+          const byteCharacters = atob(data.frameData);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: `image/${data.format}` });
+          const imageUrl = URL.createObjectURL(blob);
+
+          // Load and draw image to canvas
+          const img = new Image();
+          img.onload = () => {
+            // Update canvas size if needed
+            if (canvas.width !== img.width || canvas.height !== img.height) {
+              canvas.width = img.width;
+              canvas.height = img.height;
+            }
+
+            // Draw new frame to canvas
+            ctx.drawImage(img, 0, 0);
+
+            // Clean up
+            URL.revokeObjectURL(imageUrl);
+          };
+          img.src = imageUrl;
+
+          console.log(`✅ Frame updated for ${streamKey} (${img.width}x${img.height})`);
+        } catch (error) {
+          console.error(`❌ Error displaying video frame for ${streamKey}:`, error);
+        }
+      } else {
+        console.warn(`⚠️ Cannot display frame for ${streamKey}:`, {
+          hasVideoElement: !!videoElement,
+          hasFrameData: !!data.frameData,
+        });
+      }
     });
 
     setSocket(newSocket);
