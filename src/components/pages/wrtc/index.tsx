@@ -57,14 +57,6 @@ interface DeviceConnectionData {
   cameraId: string;
 }
 
-interface VideoFrameData {
-  deviceId: string;
-  cameraId: string;
-  format: string;
-  timestamp: number;
-  frameData: string;
-}
-
 interface SocketInstance {
   emit: (event: string, ...args: Array<unknown>) => void;
   once: (event: string, callback: (data: unknown) => void) => void;
@@ -347,6 +339,14 @@ const WebRTCMultiStreamViewer = () => {
       }
     });
     consumersRef.current.clear();
+
+    // Close Python peer connections
+    pythonPeerConnections.current.forEach((pc) => {
+      if (pc && pc.connectionState !== 'closed') {
+        pc.close();
+      }
+    });
+    pythonPeerConnections.current.clear();
 
     // Close receive transport
     if (recvTransport && !recvTransport.closed) {
@@ -693,6 +693,36 @@ const WebRTCMultiStreamViewer = () => {
       }, 0);
     });
 
+    // ✅ WebRTC Signaling Events from Python aiortc clients
+    newSocket.on('webrtc_offer', (data) => {
+      console.log('📞 Received WebRTC offer from Python client:', data);
+      handlePythonWebRtcOffer(data);
+    });
+
+    newSocket.on('webrtc_answer', (data) => {
+      console.log('📞 Received WebRTC answer from Python client:', data);
+      handlePythonWebRtcAnswer(data);
+    });
+
+    newSocket.on('ice_candidate', (data) => {
+      console.log('🧊 Received ICE candidate from Python client:', data);
+      handlePythonIceCandidate(data);
+    });
+
+    newSocket.on('stream_available', (data) => {
+      console.log('🎬 New stream available from Python client:', data);
+      handlePythonStreamAvailable(data);
+    });
+
+    newSocket.on('stream_unavailable', (data) => {
+      console.log('🛑 Stream unavailable from Python client:', data);
+      handlePythonStreamUnavailable(data);
+    });
+
+    newSocket.on('c922StatsUpdate', (data) => {
+      console.log('📊 C922 stats update:', data);
+    });
+
     newSocket.on('consumerResumed', (data: unknown) => {
       console.log('▶️ Consumer resumed:', data);
     });
@@ -702,32 +732,20 @@ const WebRTCMultiStreamViewer = () => {
     });
 
     // Enhanced video frame handling for smooth playback
-    const canvasRefs = new Map<string, HTMLCanvasElement>();
-    const streamRefs = new Map<string, MediaStream>();
+    const canvasRefs = new Map();
+    const streamRefs = new Map();
 
-    newSocket.on('videoFrameData', (data: unknown) => {
-      // Type guard to ensure data has the expected structure
-      const frameData = data as VideoFrameData;
-
-      if (
-        !frameData ||
-        typeof frameData.deviceId !== 'string' ||
-        typeof frameData.cameraId !== 'string'
-      ) {
-        console.warn('⚠️ Invalid video frame data received:', data);
-        return;
-      }
-
-      console.log(`📺 Received video frame from ${frameData.deviceId}/${frameData.cameraId}:`, {
-        format: frameData.format,
-        timestamp: frameData.timestamp,
-        dataSize: frameData.frameData?.length || 0,
+    newSocket.on('videoFrameData', (data) => {
+      console.log(`📺 Received video frame from ${data.deviceId}/${data.cameraId}:`, {
+        format: data.format,
+        timestamp: data.timestamp,
+        dataSize: data.frameData.length,
       });
 
-      const streamKey = `${frameData.deviceId}-${frameData.cameraId}`;
+      const streamKey = `${data.deviceId}-${data.cameraId}`;
       const videoElement = videoRefs.current.get(streamKey);
 
-      if (videoElement && frameData.frameData) {
+      if (videoElement && data.frameData) {
         try {
           // Get or create canvas for this stream
           let canvas = canvasRefs.get(streamKey);
@@ -746,19 +764,15 @@ const WebRTCMultiStreamViewer = () => {
           }
 
           const ctx = canvas.getContext('2d');
-          if (!ctx) {
-            console.error(`❌ Failed to get 2D context for ${streamKey}`);
-            return;
-          }
 
           // Convert base64 to image and draw to canvas
-          const byteCharacters = atob(frameData.frameData);
+          const byteCharacters = atob(data.frameData);
           const byteNumbers = new Array(byteCharacters.length);
           for (let i = 0; i < byteCharacters.length; i++) {
             byteNumbers[i] = byteCharacters.charCodeAt(i);
           }
           const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], { type: `image/${frameData.format}` });
+          const blob = new Blob([byteArray], { type: `image/${data.format}` });
           const imageUrl = URL.createObjectURL(blob);
 
           // Load and draw image to canvas
@@ -785,12 +799,144 @@ const WebRTCMultiStreamViewer = () => {
       } else {
         console.warn(`⚠️ Cannot display frame for ${streamKey}:`, {
           hasVideoElement: !!videoElement,
-          hasFrameData: !!frameData.frameData,
+          hasFrameData: !!data.frameData,
         });
       }
     });
 
     setSocket(newSocket);
+  };
+
+  // ✅ WebRTC Signaling Handlers for Python aiortc clients
+  const pythonPeerConnections = useRef(new Map());
+
+  const handlePythonWebRtcOffer = async (data) => {
+    try {
+      console.log('🔄 Processing Python WebRTC offer:', data);
+
+      const streamKey = `${data.deviceId}-${data.cameraId}`;
+
+      // Create RTCPeerConnection for Python client
+      const pc = new RTCPeerConnection({
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+      });
+
+      pythonPeerConnections.current.set(streamKey, pc);
+
+      // Handle incoming stream
+      pc.ontrack = (event) => {
+        console.log('🎵 Received track from Python client:', event);
+        const [remoteStream] = event.streams;
+
+        // Create stream entry
+        setActiveStreams((prev) => {
+          const newStreams = new Map(prev);
+          newStreams.set(streamKey, {
+            deviceId: data.deviceId,
+            cameraId: data.cameraId,
+            timestamp: Date.now(),
+            active: true,
+          });
+          return newStreams;
+        });
+
+        // Wait for video element and attach stream
+        setTimeout(() => {
+          const videoElement = videoRefs.current.get(streamKey);
+          if (videoElement) {
+            videoElement.srcObject = remoteStream;
+            videoElement.play().catch(console.error);
+            console.log('✅ Attached Python stream to video element');
+          }
+        }, 100);
+      };
+
+      // Handle ICE candidates
+      pc.onicecandidate = (event) => {
+        if (event.candidate && socketRef.current) {
+          socketRef.current.emit('ice_candidate', {
+            device_id: data.deviceId,
+            camera_id: data.cameraId,
+            candidate: event.candidate,
+          });
+        }
+      };
+
+      // Set remote description
+      await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+
+      // Create answer
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+
+      // Send answer back
+      if (socketRef.current) {
+        socketRef.current.emit('webrtc_answer', {
+          device_id: data.deviceId,
+          camera_id: data.cameraId,
+          answer: {
+            type: answer.type,
+            sdp: answer.sdp,
+          },
+        });
+      }
+
+      console.log('✅ Python WebRTC offer processed and answer sent');
+    } catch (error) {
+      console.error('❌ Error handling Python WebRTC offer:', error);
+    }
+  };
+
+  const handlePythonWebRtcAnswer = async (data) => {
+    try {
+      const streamKey = `${data.deviceId}-${data.cameraId}`;
+      const pc = pythonPeerConnections.current.get(streamKey);
+
+      if (pc) {
+        await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+        console.log('✅ Python WebRTC answer processed');
+      }
+    } catch (error) {
+      console.error('❌ Error handling Python WebRTC answer:', error);
+    }
+  };
+
+  const handlePythonIceCandidate = async (data) => {
+    try {
+      const streamKey = `${data.deviceId}-${data.cameraId}`;
+      const pc = pythonPeerConnections.current.get(streamKey);
+
+      if (pc && data.candidate) {
+        await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+        console.log('✅ Python ICE candidate processed');
+      }
+    } catch (error) {
+      console.error('❌ Error handling Python ICE candidate:', error);
+    }
+  };
+
+  const handlePythonStreamAvailable = (data) => {
+    console.log('🎬 Python stream available:', data);
+    // Stream will be handled by WebRTC signaling
+  };
+
+  const handlePythonStreamUnavailable = (data) => {
+    console.log('🛑 Python stream unavailable:', data);
+    const streamKey = `${data.deviceId || 'unknown'}-${data.cameraId || 'unknown'}`;
+
+    // Close peer connection
+    const pc = pythonPeerConnections.current.get(streamKey);
+    if (pc) {
+      pc.close();
+      pythonPeerConnections.current.delete(streamKey);
+    }
+
+    // Remove stream
+    setActiveStreams((prev) => {
+      const newStreams = new Map(prev);
+      newStreams.delete(streamKey);
+      return newStreams;
+    });
   };
 
   const initializeMediasoupDevice = async (
@@ -965,8 +1111,12 @@ const WebRTCMultiStreamViewer = () => {
         <span className="value">{devices.length}</span>
       </div>
       <div className="stat-item">
-        <span className="label">🍽️ Active Consumers:</span>
+        <span className="label">🍽️ mediasoup Consumers:</span>
         <span className="value">{consumersRef.current.size}</span>
+      </div>
+      <div className="stat-item">
+        <span className="label">🐍 Python Connections:</span>
+        <span className="value">{pythonPeerConnections.current.size}</span>
       </div>
       <div className="stat-item">
         <span className="label">🎛️ Device Status:</span>

@@ -17,7 +17,9 @@ import { Route as R403Import } from './routes/403'
 import { Route as IndexImport } from './routes/index'
 import { Route as DashboardSuperAdminImport } from './routes/_dashboard/_super-admin'
 import { Route as DashboardMasterUserImport } from './routes/_dashboard/_master-user'
+import { Route as BeforeAuthWrtcImport } from './routes/_before-auth/wrtc'
 import { Route as BeforeAuthVerifyOtpImport } from './routes/_before-auth/verify-otp'
+import { Route as BeforeAuthMonitoringImport } from './routes/_before-auth/monitoring'
 import { Route as BeforeAuthLoginImport } from './routes/_before-auth/login'
 import { Route as BeforeAuthForgotPasswordImport } from './routes/_before-auth/forgot-password'
 import { Route as BeforeAuthChangePasswordImport } from './routes/_before-auth/change-password'
@@ -58,9 +60,21 @@ const DashboardMasterUserRoute = DashboardMasterUserImport.update({
   getParentRoute: () => DashboardRoute,
 } as any)
 
+const BeforeAuthWrtcRoute = BeforeAuthWrtcImport.update({
+  id: '/wrtc',
+  path: '/wrtc',
+  getParentRoute: () => BeforeAuthRoute,
+} as any)
+
 const BeforeAuthVerifyOtpRoute = BeforeAuthVerifyOtpImport.update({
   id: '/verify-otp',
   path: '/verify-otp',
+  getParentRoute: () => BeforeAuthRoute,
+} as any)
+
+const BeforeAuthMonitoringRoute = BeforeAuthMonitoringImport.update({
+  id: '/monitoring',
+  path: '/monitoring',
   getParentRoute: () => BeforeAuthRoute,
 } as any)
 
@@ -149,11 +163,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BeforeAuthLoginImport
       parentRoute: typeof BeforeAuthImport
     }
+    '/_before-auth/monitoring': {
+      id: '/_before-auth/monitoring'
+      path: '/monitoring'
+      fullPath: '/monitoring'
+      preLoaderRoute: typeof BeforeAuthMonitoringImport
+      parentRoute: typeof BeforeAuthImport
+    }
     '/_before-auth/verify-otp': {
       id: '/_before-auth/verify-otp'
       path: '/verify-otp'
       fullPath: '/verify-otp'
       preLoaderRoute: typeof BeforeAuthVerifyOtpImport
+      parentRoute: typeof BeforeAuthImport
+    }
+    '/_before-auth/wrtc': {
+      id: '/_before-auth/wrtc'
+      path: '/wrtc'
+      fullPath: '/wrtc'
+      preLoaderRoute: typeof BeforeAuthWrtcImport
       parentRoute: typeof BeforeAuthImport
     }
     '/_dashboard/_master-user': {
@@ -193,14 +221,18 @@ interface BeforeAuthRouteChildren {
   BeforeAuthChangePasswordRoute: typeof BeforeAuthChangePasswordRoute
   BeforeAuthForgotPasswordRoute: typeof BeforeAuthForgotPasswordRoute
   BeforeAuthLoginRoute: typeof BeforeAuthLoginRoute
+  BeforeAuthMonitoringRoute: typeof BeforeAuthMonitoringRoute
   BeforeAuthVerifyOtpRoute: typeof BeforeAuthVerifyOtpRoute
+  BeforeAuthWrtcRoute: typeof BeforeAuthWrtcRoute
 }
 
 const BeforeAuthRouteChildren: BeforeAuthRouteChildren = {
   BeforeAuthChangePasswordRoute: BeforeAuthChangePasswordRoute,
   BeforeAuthForgotPasswordRoute: BeforeAuthForgotPasswordRoute,
   BeforeAuthLoginRoute: BeforeAuthLoginRoute,
+  BeforeAuthMonitoringRoute: BeforeAuthMonitoringRoute,
   BeforeAuthVerifyOtpRoute: BeforeAuthVerifyOtpRoute,
+  BeforeAuthWrtcRoute: BeforeAuthWrtcRoute,
 }
 
 const BeforeAuthRouteWithChildren = BeforeAuthRoute._addFileChildren(
@@ -251,7 +283,9 @@ export interface FileRoutesByFullPath {
   '/change-password': typeof BeforeAuthChangePasswordRoute
   '/forgot-password': typeof BeforeAuthForgotPasswordRoute
   '/login': typeof BeforeAuthLoginRoute
+  '/monitoring': typeof BeforeAuthMonitoringRoute
   '/verify-otp': typeof BeforeAuthVerifyOtpRoute
+  '/wrtc': typeof BeforeAuthWrtcRoute
   '/select-service': typeof DashboardMasterUserSelectServiceRoute
   '/service-number-management': typeof DashboardSuperAdminServiceNumberManagementRoute
 }
@@ -263,7 +297,9 @@ export interface FileRoutesByTo {
   '/change-password': typeof BeforeAuthChangePasswordRoute
   '/forgot-password': typeof BeforeAuthForgotPasswordRoute
   '/login': typeof BeforeAuthLoginRoute
+  '/monitoring': typeof BeforeAuthMonitoringRoute
   '/verify-otp': typeof BeforeAuthVerifyOtpRoute
+  '/wrtc': typeof BeforeAuthWrtcRoute
   '/select-service': typeof DashboardMasterUserSelectServiceRoute
   '/service-number-management': typeof DashboardSuperAdminServiceNumberManagementRoute
 }
@@ -277,7 +313,9 @@ export interface FileRoutesById {
   '/_before-auth/change-password': typeof BeforeAuthChangePasswordRoute
   '/_before-auth/forgot-password': typeof BeforeAuthForgotPasswordRoute
   '/_before-auth/login': typeof BeforeAuthLoginRoute
+  '/_before-auth/monitoring': typeof BeforeAuthMonitoringRoute
   '/_before-auth/verify-otp': typeof BeforeAuthVerifyOtpRoute
+  '/_before-auth/wrtc': typeof BeforeAuthWrtcRoute
   '/_dashboard/_master-user': typeof DashboardMasterUserRouteWithChildren
   '/_dashboard/_super-admin': typeof DashboardSuperAdminRouteWithChildren
   '/_dashboard/_master-user/select-service': typeof DashboardMasterUserSelectServiceRoute
@@ -293,7 +331,9 @@ export interface FileRouteTypes {
     | '/change-password'
     | '/forgot-password'
     | '/login'
+    | '/monitoring'
     | '/verify-otp'
+    | '/wrtc'
     | '/select-service'
     | '/service-number-management'
   fileRoutesByTo: FileRoutesByTo
@@ -304,7 +344,9 @@ export interface FileRouteTypes {
     | '/change-password'
     | '/forgot-password'
     | '/login'
+    | '/monitoring'
     | '/verify-otp'
+    | '/wrtc'
     | '/select-service'
     | '/service-number-management'
   id:
@@ -316,7 +358,9 @@ export interface FileRouteTypes {
     | '/_before-auth/change-password'
     | '/_before-auth/forgot-password'
     | '/_before-auth/login'
+    | '/_before-auth/monitoring'
     | '/_before-auth/verify-otp'
+    | '/_before-auth/wrtc'
     | '/_dashboard/_master-user'
     | '/_dashboard/_super-admin'
     | '/_dashboard/_master-user/select-service'
@@ -366,7 +410,9 @@ export const routeTree = rootRoute
         "/_before-auth/change-password",
         "/_before-auth/forgot-password",
         "/_before-auth/login",
-        "/_before-auth/verify-otp"
+        "/_before-auth/monitoring",
+        "/_before-auth/verify-otp",
+        "/_before-auth/wrtc"
       ]
     },
     "/_dashboard": {
@@ -388,8 +434,16 @@ export const routeTree = rootRoute
       "filePath": "_before-auth/login.tsx",
       "parent": "/_before-auth"
     },
+    "/_before-auth/monitoring": {
+      "filePath": "_before-auth/monitoring.tsx",
+      "parent": "/_before-auth"
+    },
     "/_before-auth/verify-otp": {
       "filePath": "_before-auth/verify-otp.tsx",
+      "parent": "/_before-auth"
+    },
+    "/_before-auth/wrtc": {
+      "filePath": "_before-auth/wrtc.tsx",
       "parent": "/_before-auth"
     },
     "/_dashboard/_master-user": {
