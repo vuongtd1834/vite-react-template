@@ -33,7 +33,6 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    // FIXME: remove if app does not use refresh token
     const originalRequest: CustomAxiosRequestConfig | undefined = error.config;
 
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {

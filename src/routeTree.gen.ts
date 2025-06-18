@@ -8,412 +8,458 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as WithoutAuthRouteImport } from './routes/_without-auth'
+import { Route as DashboardRouteImport } from './routes/_dashboard'
+import { Route as R403RouteImport } from './routes/403'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as WithoutAuthResetPasswordRouteImport } from './routes/_without-auth/reset-password'
+import { Route as WithoutAuthLoginRouteImport } from './routes/_without-auth/login'
+import { Route as WithoutAuthChangePasswordRouteImport } from './routes/_without-auth/change-password'
+import { Route as DashboardVideoRecordsIndexRouteImport } from './routes/_dashboard/video-records/index'
+import { Route as DashboardNotificationsIndexRouteImport } from './routes/_dashboard/notifications/index'
+import { Route as DashboardNotificationTemplatesIndexRouteImport } from './routes/_dashboard/notification-templates/index'
+import { Route as DashboardJetsonDevicesIndexRouteImport } from './routes/_dashboard/jetson-devices/index'
+import { Route as DashboardCamerasIndexRouteImport } from './routes/_dashboard/cameras/index'
+import { Route as DashboardAreasIndexRouteImport } from './routes/_dashboard/areas/index'
+import { Route as DashboardVideoRecordsRecordIdRouteImport } from './routes/_dashboard/video-records/$recordId'
+import { Route as DashboardNotificationsNotificationIdRouteImport } from './routes/_dashboard/notifications/$notificationId'
+import { Route as DashboardNotificationTemplatesTemplateIdRouteImport } from './routes/_dashboard/notification-templates/$templateId'
+import { Route as DashboardJetsonDevicesDeviceIdRouteImport } from './routes/_dashboard/jetson-devices/$deviceId'
+import { Route as DashboardCamerasCameraIdRouteImport } from './routes/_dashboard/cameras/$cameraId'
+import { Route as DashboardAreasAreaIdRouteImport } from './routes/_dashboard/areas/$areaId'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as DashboardImport } from './routes/_dashboard'
-import { Route as BeforeAuthImport } from './routes/_before-auth'
-import { Route as R403Import } from './routes/403'
-import { Route as IndexImport } from './routes/index'
-import { Route as DashboardSuperAdminImport } from './routes/_dashboard/_super-admin'
-import { Route as DashboardMasterUserImport } from './routes/_dashboard/_master-user'
-import { Route as BeforeAuthVerifyOtpImport } from './routes/_before-auth/verify-otp'
-import { Route as BeforeAuthLoginImport } from './routes/_before-auth/login'
-import { Route as BeforeAuthForgotPasswordImport } from './routes/_before-auth/forgot-password'
-import { Route as BeforeAuthChangePasswordImport } from './routes/_before-auth/change-password'
-import { Route as DashboardSuperAdminServiceNumberManagementImport } from './routes/_dashboard/_super-admin/service-number-management'
-import { Route as DashboardMasterUserSelectServiceImport } from './routes/_dashboard/_master-user/select-service'
-
-// Create/Update Routes
-
-const DashboardRoute = DashboardImport.update({
+const WithoutAuthRoute = WithoutAuthRouteImport.update({
+  id: '/_without-auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
   id: '/_dashboard',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const BeforeAuthRoute = BeforeAuthImport.update({
-  id: '/_before-auth',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const R403Route = R403Import.update({
+const R403Route = R403RouteImport.update({
   id: '/403',
   path: '/403',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const DashboardSuperAdminRoute = DashboardSuperAdminImport.update({
-  id: '/_super-admin',
-  getParentRoute: () => DashboardRoute,
-} as any)
-
-const DashboardMasterUserRoute = DashboardMasterUserImport.update({
-  id: '/_master-user',
-  getParentRoute: () => DashboardRoute,
-} as any)
-
-const BeforeAuthVerifyOtpRoute = BeforeAuthVerifyOtpImport.update({
-  id: '/verify-otp',
-  path: '/verify-otp',
-  getParentRoute: () => BeforeAuthRoute,
-} as any)
-
-const BeforeAuthLoginRoute = BeforeAuthLoginImport.update({
+const WithoutAuthResetPasswordRoute =
+  WithoutAuthResetPasswordRouteImport.update({
+    id: '/reset-password',
+    path: '/reset-password',
+    getParentRoute: () => WithoutAuthRoute,
+  } as any)
+const WithoutAuthLoginRoute = WithoutAuthLoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => BeforeAuthRoute,
+  getParentRoute: () => WithoutAuthRoute,
 } as any)
-
-const BeforeAuthForgotPasswordRoute = BeforeAuthForgotPasswordImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
-  getParentRoute: () => BeforeAuthRoute,
-} as any)
-
-const BeforeAuthChangePasswordRoute = BeforeAuthChangePasswordImport.update({
-  id: '/change-password',
-  path: '/change-password',
-  getParentRoute: () => BeforeAuthRoute,
-} as any)
-
-const DashboardSuperAdminServiceNumberManagementRoute =
-  DashboardSuperAdminServiceNumberManagementImport.update({
-    id: '/service-number-management',
-    path: '/service-number-management',
-    getParentRoute: () => DashboardSuperAdminRoute,
+const WithoutAuthChangePasswordRoute =
+  WithoutAuthChangePasswordRouteImport.update({
+    id: '/change-password',
+    path: '/change-password',
+    getParentRoute: () => WithoutAuthRoute,
   } as any)
-
-const DashboardMasterUserSelectServiceRoute =
-  DashboardMasterUserSelectServiceImport.update({
-    id: '/select-service',
-    path: '/select-service',
-    getParentRoute: () => DashboardMasterUserRoute,
+const DashboardVideoRecordsIndexRoute =
+  DashboardVideoRecordsIndexRouteImport.update({
+    id: '/video-records/',
+    path: '/video-records/',
+    getParentRoute: () => DashboardRoute,
   } as any)
+const DashboardNotificationsIndexRoute =
+  DashboardNotificationsIndexRouteImport.update({
+    id: '/notifications/',
+    path: '/notifications/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardNotificationTemplatesIndexRoute =
+  DashboardNotificationTemplatesIndexRouteImport.update({
+    id: '/notification-templates/',
+    path: '/notification-templates/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardJetsonDevicesIndexRoute =
+  DashboardJetsonDevicesIndexRouteImport.update({
+    id: '/jetson-devices/',
+    path: '/jetson-devices/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardCamerasIndexRoute = DashboardCamerasIndexRouteImport.update({
+  id: '/cameras/',
+  path: '/cameras/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardAreasIndexRoute = DashboardAreasIndexRouteImport.update({
+  id: '/areas/',
+  path: '/areas/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardVideoRecordsRecordIdRoute =
+  DashboardVideoRecordsRecordIdRouteImport.update({
+    id: '/video-records/$recordId',
+    path: '/video-records/$recordId',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardNotificationsNotificationIdRoute =
+  DashboardNotificationsNotificationIdRouteImport.update({
+    id: '/notifications/$notificationId',
+    path: '/notifications/$notificationId',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardNotificationTemplatesTemplateIdRoute =
+  DashboardNotificationTemplatesTemplateIdRouteImport.update({
+    id: '/notification-templates/$templateId',
+    path: '/notification-templates/$templateId',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardJetsonDevicesDeviceIdRoute =
+  DashboardJetsonDevicesDeviceIdRouteImport.update({
+    id: '/jetson-devices/$deviceId',
+    path: '/jetson-devices/$deviceId',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardCamerasCameraIdRoute =
+  DashboardCamerasCameraIdRouteImport.update({
+    id: '/cameras/$cameraId',
+    path: '/cameras/$cameraId',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardAreasAreaIdRoute = DashboardAreasAreaIdRouteImport.update({
+  id: '/areas/$areaId',
+  path: '/areas/$areaId',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
-// Populate the FileRoutesByPath interface
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/403': typeof R403Route
+  '/change-password': typeof WithoutAuthChangePasswordRoute
+  '/login': typeof WithoutAuthLoginRoute
+  '/reset-password': typeof WithoutAuthResetPasswordRoute
+  '/areas/$areaId': typeof DashboardAreasAreaIdRoute
+  '/cameras/$cameraId': typeof DashboardCamerasCameraIdRoute
+  '/jetson-devices/$deviceId': typeof DashboardJetsonDevicesDeviceIdRoute
+  '/notification-templates/$templateId': typeof DashboardNotificationTemplatesTemplateIdRoute
+  '/notifications/$notificationId': typeof DashboardNotificationsNotificationIdRoute
+  '/video-records/$recordId': typeof DashboardVideoRecordsRecordIdRoute
+  '/areas': typeof DashboardAreasIndexRoute
+  '/cameras': typeof DashboardCamerasIndexRoute
+  '/jetson-devices': typeof DashboardJetsonDevicesIndexRoute
+  '/notification-templates': typeof DashboardNotificationTemplatesIndexRoute
+  '/notifications': typeof DashboardNotificationsIndexRoute
+  '/video-records': typeof DashboardVideoRecordsIndexRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/403': typeof R403Route
+  '/change-password': typeof WithoutAuthChangePasswordRoute
+  '/login': typeof WithoutAuthLoginRoute
+  '/reset-password': typeof WithoutAuthResetPasswordRoute
+  '/areas/$areaId': typeof DashboardAreasAreaIdRoute
+  '/cameras/$cameraId': typeof DashboardCamerasCameraIdRoute
+  '/jetson-devices/$deviceId': typeof DashboardJetsonDevicesDeviceIdRoute
+  '/notification-templates/$templateId': typeof DashboardNotificationTemplatesTemplateIdRoute
+  '/notifications/$notificationId': typeof DashboardNotificationsNotificationIdRoute
+  '/video-records/$recordId': typeof DashboardVideoRecordsRecordIdRoute
+  '/areas': typeof DashboardAreasIndexRoute
+  '/cameras': typeof DashboardCamerasIndexRoute
+  '/jetson-devices': typeof DashboardJetsonDevicesIndexRoute
+  '/notification-templates': typeof DashboardNotificationTemplatesIndexRoute
+  '/notifications': typeof DashboardNotificationsIndexRoute
+  '/video-records': typeof DashboardVideoRecordsIndexRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/403': typeof R403Route
+  '/_dashboard': typeof DashboardRouteWithChildren
+  '/_without-auth': typeof WithoutAuthRouteWithChildren
+  '/_without-auth/change-password': typeof WithoutAuthChangePasswordRoute
+  '/_without-auth/login': typeof WithoutAuthLoginRoute
+  '/_without-auth/reset-password': typeof WithoutAuthResetPasswordRoute
+  '/_dashboard/areas/$areaId': typeof DashboardAreasAreaIdRoute
+  '/_dashboard/cameras/$cameraId': typeof DashboardCamerasCameraIdRoute
+  '/_dashboard/jetson-devices/$deviceId': typeof DashboardJetsonDevicesDeviceIdRoute
+  '/_dashboard/notification-templates/$templateId': typeof DashboardNotificationTemplatesTemplateIdRoute
+  '/_dashboard/notifications/$notificationId': typeof DashboardNotificationsNotificationIdRoute
+  '/_dashboard/video-records/$recordId': typeof DashboardVideoRecordsRecordIdRoute
+  '/_dashboard/areas/': typeof DashboardAreasIndexRoute
+  '/_dashboard/cameras/': typeof DashboardCamerasIndexRoute
+  '/_dashboard/jetson-devices/': typeof DashboardJetsonDevicesIndexRoute
+  '/_dashboard/notification-templates/': typeof DashboardNotificationTemplatesIndexRoute
+  '/_dashboard/notifications/': typeof DashboardNotificationsIndexRoute
+  '/_dashboard/video-records/': typeof DashboardVideoRecordsIndexRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/403'
+    | '/change-password'
+    | '/login'
+    | '/reset-password'
+    | '/areas/$areaId'
+    | '/cameras/$cameraId'
+    | '/jetson-devices/$deviceId'
+    | '/notification-templates/$templateId'
+    | '/notifications/$notificationId'
+    | '/video-records/$recordId'
+    | '/areas'
+    | '/cameras'
+    | '/jetson-devices'
+    | '/notification-templates'
+    | '/notifications'
+    | '/video-records'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/403'
+    | '/change-password'
+    | '/login'
+    | '/reset-password'
+    | '/areas/$areaId'
+    | '/cameras/$cameraId'
+    | '/jetson-devices/$deviceId'
+    | '/notification-templates/$templateId'
+    | '/notifications/$notificationId'
+    | '/video-records/$recordId'
+    | '/areas'
+    | '/cameras'
+    | '/jetson-devices'
+    | '/notification-templates'
+    | '/notifications'
+    | '/video-records'
+  id:
+    | '__root__'
+    | '/'
+    | '/403'
+    | '/_dashboard'
+    | '/_without-auth'
+    | '/_without-auth/change-password'
+    | '/_without-auth/login'
+    | '/_without-auth/reset-password'
+    | '/_dashboard/areas/$areaId'
+    | '/_dashboard/cameras/$cameraId'
+    | '/_dashboard/jetson-devices/$deviceId'
+    | '/_dashboard/notification-templates/$templateId'
+    | '/_dashboard/notifications/$notificationId'
+    | '/_dashboard/video-records/$recordId'
+    | '/_dashboard/areas/'
+    | '/_dashboard/cameras/'
+    | '/_dashboard/jetson-devices/'
+    | '/_dashboard/notification-templates/'
+    | '/_dashboard/notifications/'
+    | '/_dashboard/video-records/'
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  R403Route: typeof R403Route
+  DashboardRoute: typeof DashboardRouteWithChildren
+  WithoutAuthRoute: typeof WithoutAuthRouteWithChildren
+}
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/403': {
-      id: '/403'
-      path: '/403'
-      fullPath: '/403'
-      preLoaderRoute: typeof R403Import
-      parentRoute: typeof rootRoute
-    }
-    '/_before-auth': {
-      id: '/_before-auth'
+    '/_without-auth': {
+      id: '/_without-auth'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof BeforeAuthImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof WithoutAuthRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_dashboard': {
       id: '/_dashboard'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof DashboardImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_before-auth/change-password': {
-      id: '/_before-auth/change-password'
-      path: '/change-password'
-      fullPath: '/change-password'
-      preLoaderRoute: typeof BeforeAuthChangePasswordImport
-      parentRoute: typeof BeforeAuthImport
+    '/403': {
+      id: '/403'
+      path: '/403'
+      fullPath: '/403'
+      preLoaderRoute: typeof R403RouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_before-auth/forgot-password': {
-      id: '/_before-auth/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
-      preLoaderRoute: typeof BeforeAuthForgotPasswordImport
-      parentRoute: typeof BeforeAuthImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_before-auth/login': {
-      id: '/_before-auth/login'
+    '/_without-auth/reset-password': {
+      id: '/_without-auth/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof WithoutAuthResetPasswordRouteImport
+      parentRoute: typeof WithoutAuthRoute
+    }
+    '/_without-auth/login': {
+      id: '/_without-auth/login'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof BeforeAuthLoginImport
-      parentRoute: typeof BeforeAuthImport
+      preLoaderRoute: typeof WithoutAuthLoginRouteImport
+      parentRoute: typeof WithoutAuthRoute
     }
-    '/_before-auth/verify-otp': {
-      id: '/_before-auth/verify-otp'
-      path: '/verify-otp'
-      fullPath: '/verify-otp'
-      preLoaderRoute: typeof BeforeAuthVerifyOtpImport
-      parentRoute: typeof BeforeAuthImport
+    '/_without-auth/change-password': {
+      id: '/_without-auth/change-password'
+      path: '/change-password'
+      fullPath: '/change-password'
+      preLoaderRoute: typeof WithoutAuthChangePasswordRouteImport
+      parentRoute: typeof WithoutAuthRoute
     }
-    '/_dashboard/_master-user': {
-      id: '/_dashboard/_master-user'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof DashboardMasterUserImport
-      parentRoute: typeof DashboardImport
+    '/_dashboard/video-records/': {
+      id: '/_dashboard/video-records/'
+      path: '/video-records'
+      fullPath: '/video-records'
+      preLoaderRoute: typeof DashboardVideoRecordsIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
-    '/_dashboard/_super-admin': {
-      id: '/_dashboard/_super-admin'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof DashboardSuperAdminImport
-      parentRoute: typeof DashboardImport
+    '/_dashboard/notifications/': {
+      id: '/_dashboard/notifications/'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof DashboardNotificationsIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
-    '/_dashboard/_master-user/select-service': {
-      id: '/_dashboard/_master-user/select-service'
-      path: '/select-service'
-      fullPath: '/select-service'
-      preLoaderRoute: typeof DashboardMasterUserSelectServiceImport
-      parentRoute: typeof DashboardMasterUserImport
+    '/_dashboard/notification-templates/': {
+      id: '/_dashboard/notification-templates/'
+      path: '/notification-templates'
+      fullPath: '/notification-templates'
+      preLoaderRoute: typeof DashboardNotificationTemplatesIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
-    '/_dashboard/_super-admin/service-number-management': {
-      id: '/_dashboard/_super-admin/service-number-management'
-      path: '/service-number-management'
-      fullPath: '/service-number-management'
-      preLoaderRoute: typeof DashboardSuperAdminServiceNumberManagementImport
-      parentRoute: typeof DashboardSuperAdminImport
+    '/_dashboard/jetson-devices/': {
+      id: '/_dashboard/jetson-devices/'
+      path: '/jetson-devices'
+      fullPath: '/jetson-devices'
+      preLoaderRoute: typeof DashboardJetsonDevicesIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/cameras/': {
+      id: '/_dashboard/cameras/'
+      path: '/cameras'
+      fullPath: '/cameras'
+      preLoaderRoute: typeof DashboardCamerasIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/areas/': {
+      id: '/_dashboard/areas/'
+      path: '/areas'
+      fullPath: '/areas'
+      preLoaderRoute: typeof DashboardAreasIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/video-records/$recordId': {
+      id: '/_dashboard/video-records/$recordId'
+      path: '/video-records/$recordId'
+      fullPath: '/video-records/$recordId'
+      preLoaderRoute: typeof DashboardVideoRecordsRecordIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/notifications/$notificationId': {
+      id: '/_dashboard/notifications/$notificationId'
+      path: '/notifications/$notificationId'
+      fullPath: '/notifications/$notificationId'
+      preLoaderRoute: typeof DashboardNotificationsNotificationIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/notification-templates/$templateId': {
+      id: '/_dashboard/notification-templates/$templateId'
+      path: '/notification-templates/$templateId'
+      fullPath: '/notification-templates/$templateId'
+      preLoaderRoute: typeof DashboardNotificationTemplatesTemplateIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/jetson-devices/$deviceId': {
+      id: '/_dashboard/jetson-devices/$deviceId'
+      path: '/jetson-devices/$deviceId'
+      fullPath: '/jetson-devices/$deviceId'
+      preLoaderRoute: typeof DashboardJetsonDevicesDeviceIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/cameras/$cameraId': {
+      id: '/_dashboard/cameras/$cameraId'
+      path: '/cameras/$cameraId'
+      fullPath: '/cameras/$cameraId'
+      preLoaderRoute: typeof DashboardCamerasCameraIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/areas/$areaId': {
+      id: '/_dashboard/areas/$areaId'
+      path: '/areas/$areaId'
+      fullPath: '/areas/$areaId'
+      preLoaderRoute: typeof DashboardAreasAreaIdRouteImport
+      parentRoute: typeof DashboardRoute
     }
   }
 }
 
-// Create and export the route tree
-
-interface BeforeAuthRouteChildren {
-  BeforeAuthChangePasswordRoute: typeof BeforeAuthChangePasswordRoute
-  BeforeAuthForgotPasswordRoute: typeof BeforeAuthForgotPasswordRoute
-  BeforeAuthLoginRoute: typeof BeforeAuthLoginRoute
-  BeforeAuthVerifyOtpRoute: typeof BeforeAuthVerifyOtpRoute
-}
-
-const BeforeAuthRouteChildren: BeforeAuthRouteChildren = {
-  BeforeAuthChangePasswordRoute: BeforeAuthChangePasswordRoute,
-  BeforeAuthForgotPasswordRoute: BeforeAuthForgotPasswordRoute,
-  BeforeAuthLoginRoute: BeforeAuthLoginRoute,
-  BeforeAuthVerifyOtpRoute: BeforeAuthVerifyOtpRoute,
-}
-
-const BeforeAuthRouteWithChildren = BeforeAuthRoute._addFileChildren(
-  BeforeAuthRouteChildren,
-)
-
-interface DashboardMasterUserRouteChildren {
-  DashboardMasterUserSelectServiceRoute: typeof DashboardMasterUserSelectServiceRoute
-}
-
-const DashboardMasterUserRouteChildren: DashboardMasterUserRouteChildren = {
-  DashboardMasterUserSelectServiceRoute: DashboardMasterUserSelectServiceRoute,
-}
-
-const DashboardMasterUserRouteWithChildren =
-  DashboardMasterUserRoute._addFileChildren(DashboardMasterUserRouteChildren)
-
-interface DashboardSuperAdminRouteChildren {
-  DashboardSuperAdminServiceNumberManagementRoute: typeof DashboardSuperAdminServiceNumberManagementRoute
-}
-
-const DashboardSuperAdminRouteChildren: DashboardSuperAdminRouteChildren = {
-  DashboardSuperAdminServiceNumberManagementRoute:
-    DashboardSuperAdminServiceNumberManagementRoute,
-}
-
-const DashboardSuperAdminRouteWithChildren =
-  DashboardSuperAdminRoute._addFileChildren(DashboardSuperAdminRouteChildren)
-
 interface DashboardRouteChildren {
-  DashboardMasterUserRoute: typeof DashboardMasterUserRouteWithChildren
-  DashboardSuperAdminRoute: typeof DashboardSuperAdminRouteWithChildren
+  DashboardAreasAreaIdRoute: typeof DashboardAreasAreaIdRoute
+  DashboardCamerasCameraIdRoute: typeof DashboardCamerasCameraIdRoute
+  DashboardJetsonDevicesDeviceIdRoute: typeof DashboardJetsonDevicesDeviceIdRoute
+  DashboardNotificationTemplatesTemplateIdRoute: typeof DashboardNotificationTemplatesTemplateIdRoute
+  DashboardNotificationsNotificationIdRoute: typeof DashboardNotificationsNotificationIdRoute
+  DashboardVideoRecordsRecordIdRoute: typeof DashboardVideoRecordsRecordIdRoute
+  DashboardAreasIndexRoute: typeof DashboardAreasIndexRoute
+  DashboardCamerasIndexRoute: typeof DashboardCamerasIndexRoute
+  DashboardJetsonDevicesIndexRoute: typeof DashboardJetsonDevicesIndexRoute
+  DashboardNotificationTemplatesIndexRoute: typeof DashboardNotificationTemplatesIndexRoute
+  DashboardNotificationsIndexRoute: typeof DashboardNotificationsIndexRoute
+  DashboardVideoRecordsIndexRoute: typeof DashboardVideoRecordsIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardMasterUserRoute: DashboardMasterUserRouteWithChildren,
-  DashboardSuperAdminRoute: DashboardSuperAdminRouteWithChildren,
+  DashboardAreasAreaIdRoute: DashboardAreasAreaIdRoute,
+  DashboardCamerasCameraIdRoute: DashboardCamerasCameraIdRoute,
+  DashboardJetsonDevicesDeviceIdRoute: DashboardJetsonDevicesDeviceIdRoute,
+  DashboardNotificationTemplatesTemplateIdRoute:
+    DashboardNotificationTemplatesTemplateIdRoute,
+  DashboardNotificationsNotificationIdRoute:
+    DashboardNotificationsNotificationIdRoute,
+  DashboardVideoRecordsRecordIdRoute: DashboardVideoRecordsRecordIdRoute,
+  DashboardAreasIndexRoute: DashboardAreasIndexRoute,
+  DashboardCamerasIndexRoute: DashboardCamerasIndexRoute,
+  DashboardJetsonDevicesIndexRoute: DashboardJetsonDevicesIndexRoute,
+  DashboardNotificationTemplatesIndexRoute:
+    DashboardNotificationTemplatesIndexRoute,
+  DashboardNotificationsIndexRoute: DashboardNotificationsIndexRoute,
+  DashboardVideoRecordsIndexRoute: DashboardVideoRecordsIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
-export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/403': typeof R403Route
-  '': typeof DashboardSuperAdminRouteWithChildren
-  '/change-password': typeof BeforeAuthChangePasswordRoute
-  '/forgot-password': typeof BeforeAuthForgotPasswordRoute
-  '/login': typeof BeforeAuthLoginRoute
-  '/verify-otp': typeof BeforeAuthVerifyOtpRoute
-  '/select-service': typeof DashboardMasterUserSelectServiceRoute
-  '/service-number-management': typeof DashboardSuperAdminServiceNumberManagementRoute
+interface WithoutAuthRouteChildren {
+  WithoutAuthChangePasswordRoute: typeof WithoutAuthChangePasswordRoute
+  WithoutAuthLoginRoute: typeof WithoutAuthLoginRoute
+  WithoutAuthResetPasswordRoute: typeof WithoutAuthResetPasswordRoute
 }
 
-export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/403': typeof R403Route
-  '': typeof DashboardSuperAdminRouteWithChildren
-  '/change-password': typeof BeforeAuthChangePasswordRoute
-  '/forgot-password': typeof BeforeAuthForgotPasswordRoute
-  '/login': typeof BeforeAuthLoginRoute
-  '/verify-otp': typeof BeforeAuthVerifyOtpRoute
-  '/select-service': typeof DashboardMasterUserSelectServiceRoute
-  '/service-number-management': typeof DashboardSuperAdminServiceNumberManagementRoute
+const WithoutAuthRouteChildren: WithoutAuthRouteChildren = {
+  WithoutAuthChangePasswordRoute: WithoutAuthChangePasswordRoute,
+  WithoutAuthLoginRoute: WithoutAuthLoginRoute,
+  WithoutAuthResetPasswordRoute: WithoutAuthResetPasswordRoute,
 }
 
-export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/403': typeof R403Route
-  '/_before-auth': typeof BeforeAuthRouteWithChildren
-  '/_dashboard': typeof DashboardRouteWithChildren
-  '/_before-auth/change-password': typeof BeforeAuthChangePasswordRoute
-  '/_before-auth/forgot-password': typeof BeforeAuthForgotPasswordRoute
-  '/_before-auth/login': typeof BeforeAuthLoginRoute
-  '/_before-auth/verify-otp': typeof BeforeAuthVerifyOtpRoute
-  '/_dashboard/_master-user': typeof DashboardMasterUserRouteWithChildren
-  '/_dashboard/_super-admin': typeof DashboardSuperAdminRouteWithChildren
-  '/_dashboard/_master-user/select-service': typeof DashboardMasterUserSelectServiceRoute
-  '/_dashboard/_super-admin/service-number-management': typeof DashboardSuperAdminServiceNumberManagementRoute
-}
-
-export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/403'
-    | ''
-    | '/change-password'
-    | '/forgot-password'
-    | '/login'
-    | '/verify-otp'
-    | '/select-service'
-    | '/service-number-management'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/403'
-    | ''
-    | '/change-password'
-    | '/forgot-password'
-    | '/login'
-    | '/verify-otp'
-    | '/select-service'
-    | '/service-number-management'
-  id:
-    | '__root__'
-    | '/'
-    | '/403'
-    | '/_before-auth'
-    | '/_dashboard'
-    | '/_before-auth/change-password'
-    | '/_before-auth/forgot-password'
-    | '/_before-auth/login'
-    | '/_before-auth/verify-otp'
-    | '/_dashboard/_master-user'
-    | '/_dashboard/_super-admin'
-    | '/_dashboard/_master-user/select-service'
-    | '/_dashboard/_super-admin/service-number-management'
-  fileRoutesById: FileRoutesById
-}
-
-export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  R403Route: typeof R403Route
-  BeforeAuthRoute: typeof BeforeAuthRouteWithChildren
-  DashboardRoute: typeof DashboardRouteWithChildren
-}
+const WithoutAuthRouteWithChildren = WithoutAuthRoute._addFileChildren(
+  WithoutAuthRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R403Route: R403Route,
-  BeforeAuthRoute: BeforeAuthRouteWithChildren,
   DashboardRoute: DashboardRouteWithChildren,
+  WithoutAuthRoute: WithoutAuthRouteWithChildren,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.ts",
-      "children": [
-        "/",
-        "/403",
-        "/_before-auth",
-        "/_dashboard"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/403": {
-      "filePath": "403.tsx"
-    },
-    "/_before-auth": {
-      "filePath": "_before-auth.tsx",
-      "children": [
-        "/_before-auth/change-password",
-        "/_before-auth/forgot-password",
-        "/_before-auth/login",
-        "/_before-auth/verify-otp"
-      ]
-    },
-    "/_dashboard": {
-      "filePath": "_dashboard.tsx",
-      "children": [
-        "/_dashboard/_master-user",
-        "/_dashboard/_super-admin"
-      ]
-    },
-    "/_before-auth/change-password": {
-      "filePath": "_before-auth/change-password.tsx",
-      "parent": "/_before-auth"
-    },
-    "/_before-auth/forgot-password": {
-      "filePath": "_before-auth/forgot-password.tsx",
-      "parent": "/_before-auth"
-    },
-    "/_before-auth/login": {
-      "filePath": "_before-auth/login.tsx",
-      "parent": "/_before-auth"
-    },
-    "/_before-auth/verify-otp": {
-      "filePath": "_before-auth/verify-otp.tsx",
-      "parent": "/_before-auth"
-    },
-    "/_dashboard/_master-user": {
-      "filePath": "_dashboard/_master-user.tsx",
-      "parent": "/_dashboard",
-      "children": [
-        "/_dashboard/_master-user/select-service"
-      ]
-    },
-    "/_dashboard/_super-admin": {
-      "filePath": "_dashboard/_super-admin.tsx",
-      "parent": "/_dashboard",
-      "children": [
-        "/_dashboard/_super-admin/service-number-management"
-      ]
-    },
-    "/_dashboard/_master-user/select-service": {
-      "filePath": "_dashboard/_master-user/select-service.tsx",
-      "parent": "/_dashboard/_master-user"
-    },
-    "/_dashboard/_super-admin/service-number-management": {
-      "filePath": "_dashboard/_super-admin/service-number-management.tsx",
-      "parent": "/_dashboard/_super-admin"
-    }
-  }
-}
-ROUTE_MANIFEST_END */

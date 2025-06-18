@@ -15,7 +15,6 @@ function Home() {
 export const Route = createFileRoute('/')({
   component: Home,
   beforeLoad: () => {
-    // TODO: need move logic to common or etc
     const { user } = useUserStore.getState();
     const isAuthenticated = !!user;
     if (!isAuthenticated) {
